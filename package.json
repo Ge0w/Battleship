@@ -1,0 +1,25 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "Battleship project from The Odin Project Javascript Path",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ge0w/Battleship.git"
+  },
+  "author": "George Walker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ge0w/Battleship/issues"
+  },
+  "homepage": "https://github.com/Ge0w/Battleship#readme",
+  "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "babel-jest": "^28.1.0",
+    "jest": "^28.1.0"
+  }
+}
