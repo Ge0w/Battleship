@@ -30,17 +30,31 @@ const Gameboard = (() => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
-  const placeShip = (type, x, y) => {
+  const placeShip = (type, x, y, axis) => {
     const ship = Ship(type);
-    for (let i = 0; i < ship.length; i++) {
-      gameBoard[x][y + i] = 1;
+    if (axis) {
+      for (let i = 0; i < ship.length; i++) {
+        gameBoard[x][y + i] = 1;
+      }
+    } else {
+      for (let i = 0; i < ship.length; i++) {
+        gameBoard[x + i][y] = 1;
+      }
     }
   };
   const receiveAttack = (x, y) => {
     if (gameBoard[x][y] === 1) {
     }
   };
-  return { gameBoard, placeShip };
+
+  const resetBoard = (board) => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        board[i][j] = 0;
+      }
+    }
+  };
+  return { gameBoard, placeShip, resetBoard };
 })();
 
 module.exports = { Ship, isSunk, Gameboard };
