@@ -3,11 +3,13 @@ const Ship = (length) => {
   const hit = (index) => {
     hits[index] = 1;
   };
+  let coordinates = [];
   return {
     length: length,
     hits: hits,
     sunk: false,
     hit,
+    coordinates,
   };
 };
 
@@ -30,20 +32,26 @@ const Gameboard = (() => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
+
   const placeShip = (type, x, y, axis) => {
-    const ship = Ship(type);
+    const ship = Ship(type, x, y);
     if (axis) {
       for (let i = 0; i < ship.length; i++) {
         gameBoard[x][y + i] = 1;
+        ship.coordinates.push([x][y]);
       }
     } else {
       for (let i = 0; i < ship.length; i++) {
         gameBoard[x + i][y] = 1;
+        ship.coordinates.push([x][y]);
       }
     }
   };
   const receiveAttack = (x, y) => {
-    if (gameBoard[x][y] === 1) {
+    if (gameBoard[x][y] === 0) {
+      gameBoard[x][y] = 3;
+    } else if (gameBoard[x][y] === 1) {
+      gameBoard[x][y] = 2;
     }
   };
 
@@ -54,7 +62,12 @@ const Gameboard = (() => {
       }
     }
   };
-  return { gameBoard, placeShip, resetBoard };
+  return { gameBoard, placeShip, resetBoard, receiveAttack };
 })();
 
-module.exports = { Ship, isSunk, Gameboard };
+const Player = (name) => {
+  let turn = true;
+  return { name, turn };
+};
+
+module.exports = { Ship, isSunk, Gameboard, Player };
