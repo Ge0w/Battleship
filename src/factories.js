@@ -69,8 +69,7 @@ const Gameboard = () => {
 };
 
 //Player factory function
-const Player = (name) => {
-  let turn = true;
+const Player = (name, turn) => {
   return { name, turn };
 };
 
