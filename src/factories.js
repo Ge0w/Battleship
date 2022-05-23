@@ -1,3 +1,4 @@
+// Ship factory function
 const Ship = (length) => {
   const hits = [...Array(length).keys()].map((e) => (e = 0));
   const hit = (index) => {
@@ -19,6 +20,7 @@ const isSunk = (ship) => {
   }
 };
 
+// Gameboard factory function
 const Gameboard = () => {
   let gameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,6 +35,7 @@ const Gameboard = () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
+  // Place ship function: places ship in array and pushes coordinates to ship
   const placeShip = (type, x, y, axis) => {
     const ship = Ship(type, x, y);
     if (axis) {
@@ -65,6 +68,7 @@ const Gameboard = () => {
   return { gameBoard, placeShip, resetBoard, receiveAttack };
 };
 
+//Player factory function
 const Player = (name) => {
   let turn = true;
   return { name, turn };
