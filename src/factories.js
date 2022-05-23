@@ -19,7 +19,7 @@ const isSunk = (ship) => {
   }
 };
 
-const Gameboard = (() => {
+const Gameboard = () => {
   let gameBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -63,7 +63,7 @@ const Gameboard = (() => {
     }
   };
   return { gameBoard, placeShip, resetBoard, receiveAttack };
-})();
+};
 
 const Player = (name) => {
   let turn = true;
