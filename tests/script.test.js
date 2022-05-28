@@ -1,4 +1,4 @@
-import { Ship, isSunk, Gameboard, Player } from "./factories";
+import { Ship, isSunk, Gameboard, Player } from "../src/factories";
 
 test("Creates ship of length 5", () => {
   expect(Ship(5).length).toBe(5);

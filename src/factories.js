@@ -4,13 +4,11 @@ const Ship = (length) => {
   const hit = (index) => {
     hits[index] = 1;
   };
-  let coordinates = [];
   return {
     length: length,
     hits: hits,
     sunk: false,
     hit,
-    coordinates,
   };
 };
 
@@ -35,29 +33,39 @@ const Gameboard = () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
+  const ships = [];
+
   // Place ship function: places ship in array and pushes coordinates to ship
-  const placeShip = (type, x, y, axis) => {
-    const ship = Ship(type, x, y);
+  const placeShip = (shipType, x, y, axis) => {
+    ships.push(type);
+    shipType.placementArray = [];
     if (axis) {
       for (let i = 0; i < ship.length; i++) {
         gameBoard[x][y + i] = 1;
-        ship.coordinates.push([x][y]);
+        shipType.placementArray.push([x][y]);
       }
     } else {
       for (let i = 0; i < ship.length; i++) {
         gameBoard[x + i][y] = 1;
-        ship.coordinates.push([x][y]);
+        shipType.placementArray.push([x][y]);
       }
     }
   };
+  // Receives attack, updates gameboard and hits ship
   const receiveAttack = (x, y) => {
     if (gameBoard[x][y] === 0) {
-      gameBoard[x][y] = 3;
-    } else if (gameBoard[x][y] === 1) {
-      gameBoard[x][y] = 2;
+      gameBoard[x][y] = 1;
+      ships.forEach((e) => {
+        e.placementArray.forEach((coord) => {
+          if (coord[0] === x && coord[1] === y) {
+            e.hit(e.placementArray.indexOf(coord));
+          }
+        });
+      });
     }
   };
 
+  // Resets board
   const resetBoard = (board) => {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {

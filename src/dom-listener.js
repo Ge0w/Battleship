@@ -15,4 +15,4 @@ const createGameboard = (player) => {
   }
 };
 
-export { createGameboard };
+module.exports = { createGameboard };
