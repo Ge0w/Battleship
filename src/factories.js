@@ -37,15 +37,15 @@ const Gameboard = () => {
 
   // Place ship function: places ship in array and pushes coordinates to ship
   const placeShip = (shipType, x, y, axis) => {
-    ships.push(type);
+    ships.push(shipType);
     shipType.placementArray = [];
     if (axis) {
-      for (let i = 0; i < ship.length; i++) {
+      for (let i = 0; i < shipType.length; i++) {
         gameBoard[x][y + i] = 1;
         shipType.placementArray.push([x][y]);
       }
     } else {
-      for (let i = 0; i < ship.length; i++) {
+      for (let i = 0; i < shipType.length; i++) {
         gameBoard[x + i][y] = 1;
         shipType.placementArray.push([x][y]);
       }
@@ -66,10 +66,10 @@ const Gameboard = () => {
   };
 
   // Resets board
-  const resetBoard = (board) => {
-    for (let i = 0; i < board.length; i++) {
-      for (let j = 0; j < board[i].length; j++) {
-        board[i][j] = 0;
+  const resetBoard = () => {
+    for (let i = 0; i < gameBoard.length; i++) {
+      for (let j = 0; j < gameBoard[i].length; j++) {
+        gameBoard[i][j] = 0;
       }
     }
   };
@@ -78,7 +78,15 @@ const Gameboard = () => {
 
 //Player factory function
 const Player = (name, turn) => {
-  return { name, turn };
+  let isTurn = turn;
+  const takeTurn = () => {
+    if (isTurn) {
+      isTurn = false;
+    } else {
+      isTurn = true;
+    }
+  };
+  return { name, isTurn, takeTurn };
 };
 
 module.exports = { Ship, isSunk, Gameboard, Player };
