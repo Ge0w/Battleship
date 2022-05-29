@@ -11,8 +11,33 @@ const createGameboard = (player) => {
       const cell = document.createElement("div");
       cell.classList.add("cell");
       gridContainer.append(cell);
+      if (j < 1 && i < 9) {
+        const coordY = document.createElement("div");
+        coordY.classList.add("coord-y");
+        cell.append(coordY);
+        coordY.textContent = String.fromCharCode(49 + i);
+      } else if (j < 1 && i === 9) {
+        const coordY = document.createElement("div");
+        coordY.classList.add("coord-y");
+        cell.append(coordY);
+        coordY.textContent = 10;
+      }
+      if (i < 1) {
+        const coordX = document.createElement("div");
+        coordX.classList.add("coord-x");
+        cell.append(coordX);
+        coordX.textContent = String.fromCharCode(65 + j);
+      }
     }
   }
 };
 
-module.exports = { createGameboard };
+const takeTurn = (user) => {
+  if (user.isTurn) {
+    user.isTurn = false;
+  } else {
+    user.isTurn = true;
+  }
+};
+
+module.exports = { createGameboard, takeTurn };

@@ -3,19 +3,17 @@ const Ship = (length) => {
   const hits = [...Array(length).keys()].map((e) => (e = 0));
   const hit = (index) => {
     hits[index] = 1;
+    return hits;
+  };
+  const isSunk = () => {
+    hits.every((e) => e === 1);
   };
   return {
-    length: length,
-    hits: hits,
-    sunk: false,
+    length,
+    hits,
     hit,
+    isSunk,
   };
-};
-
-const isSunk = (ship) => {
-  if (ship.hits.every((e) => e === 1)) {
-    return (ship.sunk = true);
-  }
 };
 
 // Gameboard factory function
@@ -42,23 +40,23 @@ const Gameboard = () => {
     if (axis) {
       for (let i = 0; i < shipType.length; i++) {
         gameBoard[x][y + i] = 1;
-        shipType.placementArray.push([x][y]);
+        shipType.placementArray.push([x, y + i]);
       }
     } else {
       for (let i = 0; i < shipType.length; i++) {
         gameBoard[x + i][y] = 1;
-        shipType.placementArray.push([x][y]);
+        shipType.placementArray.push([x + i, y]);
       }
     }
   };
   // Receives attack, updates gameboard and hits ship
   const receiveAttack = (x, y) => {
-    if (gameBoard[x][y] === 0) {
-      gameBoard[x][y] = 1;
-      ships.forEach((e) => {
-        e.placementArray.forEach((coord) => {
+    if (gameBoard[x][y] === 0 || gameBoard[x][y] === 1) {
+      gameBoard[x][y] = 2;
+      ships.forEach((shipp) => {
+        shipp.placementArray.forEach((coord) => {
           if (coord[0] === x && coord[1] === y) {
-            e.hit(e.placementArray.indexOf(coord));
+            shipp.hit(shipp.placementArray.indexOf(coord));
           }
         });
       });
@@ -73,7 +71,7 @@ const Gameboard = () => {
       }
     }
   };
-  return { gameBoard, placeShip, resetBoard, receiveAttack };
+  return { gameBoard, placeShip, resetBoard, receiveAttack, ships };
 };
 
 //Player factory function
@@ -89,4 +87,4 @@ const Player = (name, turn) => {
   return { name, isTurn, takeTurn };
 };
 
-module.exports = { Ship, isSunk, Gameboard, Player };
+module.exports = { Ship, Gameboard, Player };
