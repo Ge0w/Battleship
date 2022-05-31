@@ -49,7 +49,7 @@ const Gameboard = () => {
       }
     }
   };
-  // Receives attack, updates gameboard and hits ship
+  // Receives attack and hits ship
   const receiveAttack = (x, y) => {
     if (gameBoard[x][y] === 0 || gameBoard[x][y] === 1) {
       gameBoard[x][y] = 2;
