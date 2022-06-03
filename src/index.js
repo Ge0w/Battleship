@@ -20,7 +20,6 @@ myGrid.placeShip(myShip3a, 3, 1, false);
 myGrid.placeShip(myShip3b, 5, 1, false);
 myGrid.placeShip(myShip4, 7, 1, false);
 myGrid.placeShip(myShip5, 2, 7, true);
-console.log(myShip5);
 
 //Create player and opponent
 const player = Player("Your", true);
@@ -45,4 +44,5 @@ placedShip.forEach((cell) => {
   });
 });
 
-myGrid.removeShip(myGrid.ships, "2,7", myGrid);
+myGrid.removeShip(myGrid.ships, "3,1", myGrid);
+myGrid.addShip(myGrid, 3, 3, false);
