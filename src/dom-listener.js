@@ -100,7 +100,9 @@ const createGameboard = (board, player) => {
         const cell = document.querySelector(
           `[data-coord='${coord[0]},${coord[2]}']`
         );
-        cell.classList.toggle("placed-ship");
+        if (!cell.classList.contains("placed-ship")) {
+          cell.classList.toggle("placed-ship");
+        }
       });
     });
   };

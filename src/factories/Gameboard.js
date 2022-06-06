@@ -1,129 +1,81 @@
 // Gameboard factory function
 const Gameboard = () => {
-  let gameBoard = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ];
+  //Generate ships in random location & direction
+  const generate = (ship) => {
+    let randomDirection = Math.floor(Math.random() * ship.directions.length);
+    let current = ship.directions[randomDirection];
+    if (randomDirection === 0) direction = 1;
+    if (randomDirection === 1) direction = 10;
+    let randomStart = Math.abs(
+      Math.floor(
+        Math.random() * computerSquares.length -
+          ship.directions[0].length * direction
+      )
+    );
 
-  const ships = [];
+    const isTaken = current.some((index) =>
+      computerSquares[randomStart + index].classList.contains("taken")
+    );
+    const isAtRightEdge = current.some(
+      (index) => (randomStart + index) % width === width - 1
+    );
+    const isAtLeftEdge = current.some(
+      (index) => (randomStart + index) % width === 0
+    );
 
-  // Place ship function: places ship in array and pushes coordinates to ship
-  const placeShip = (shipType, x, y, axis) => {
-    ships.push(shipType);
-    shipType.placementArray = [];
-    shipType.axis = axis;
-    if (axis) {
-      for (let i = 0; i < shipType.length; i++) {
-        gameBoard[y][x + i] = 1;
-        shipType.placementArray.push(`${x + i},${y}`);
-      }
-    } else {
-      for (let i = 0; i < shipType.length; i++) {
-        gameBoard[y + i][x] = 1;
-        shipType.placementArray.push(`${x},${y + i}`);
-      }
-    }
-  };
-  // Removes ship
-  let removedShip;
-  const removeShip = (fleet, coord, board) => {
-    fleet.forEach((ship) => {
-      ship.placementArray.forEach((shipCoord) => {
-        if (shipCoord === coord) {
-          for (let i = 0; i < ship.placementArray.length; i++) {
-            const cell = document.querySelector(
-              `[data-coord='${ship.placementArray[0 + i][0]},${
-                ship.placementArray[0 + i][2]
-              }']`
-            );
-            cell.classList.toggle("placed-ship");
-          }
-          if (ship.axis) {
-            for (let i = 0; i < ship.placementArray.length; i++) {
-              board.gameBoard[ship.placementArray[0][2]][
-                parseInt(ship.placementArray[0][0]) + i
-              ] = 0;
-            }
-          } else {
-            for (let i = 0; i < ship.placementArray.length; i++) {
-              board.gameBoard[parseInt(ship.placementArray[0][2]) + i][
-                ship.placementArray[0][0]
-              ] = 0;
-            }
-          }
-          ship.placementArray = [];
-          let shipIndex = fleet.indexOf(ship);
-          removedShip = { ship, shipIndex };
-        }
-      });
-    });
+    if (!isTaken && !isAtRightEdge && !isAtLeftEdge)
+      current.forEach((index) =>
+        computerSquares[randomStart + index].classList.add("taken", ship.name)
+      );
+    else generate(ship);
   };
 
-  // Add ship (on move)
-  const addShip = (board, x, y, axis) => {
-    console.log(removedShip);
-    //Update gameboard and ship placement array
-    if (axis) {
-      for (let i = 0; i < removedShip.ship.length; i++) {
-        gameBoard[y][x + i] = 1;
-        board.ships[removedShip.shipIndex].placementArray.push(`${x + i},${y}`);
-      }
-    } else {
-      for (let i = 0; i < removedShip.ship.length; i++) {
-        gameBoard[y + i][x] = 1;
-        board.ships[removedShip.shipIndex].placementArray.push(`${x},${y + i}`);
-      }
-    }
-    // Update dom with ship position
-    for (let i = 0; i < removedShip.ship.placementArray.length; i++) {
-      board.ships[removedShip.shipIndex].placementArray.forEach((coord) => {
-        const cell = document.querySelector(
-          `[data-coord='${coord[0]},${coord[2]}']`
-        );
-        cell.classList.toggle("placed-ship");
-      });
+  // Start singleplayer game
+  const startSinglePlayer = (ship1, ship2, ship3, ship4, ship5) => {
+    gameMode = "singlePlayer";
+
+    generate(ship1);
+    generate(ship2);
+    generate(ship3);
+    generate(ship4);
+    generate(ship5);
+
+    startButton.addEventListener("click", playGameSingle);
+  };
+
+  // Create dom gameboard
+  const createBoard = (grid, squares, width) => {
+    for (let i = 0; i < width * width; i++) {
+      const square = document.createElement("div");
+      square.dataset.id = i;
+      grid.appendChild(square);
+      squares.push(square);
     }
   };
 
-  // Receives attack and hits ship
-  const receiveAttack = (x, y) => {
-    if (gameBoard[x][y] === 0 || gameBoard[x][y] === 1) {
-      gameBoard[x][y] = 2;
-      ships.forEach((shipp) => {
-        shipp.placementArray.forEach((coord) => {
-          if (coord[0] === x && coord[2] === y) {
-            shipp.hit(shipp.placementArray.indexOf(coord));
-          }
-        });
-      });
+  // Allow rotation of ships
+  let isHorizontal = true;
+  const rotate = () => {
+    if (isHorizontal) {
+      destroyer.classList.toggle("destroyer-container-vertical");
+      submarine.classList.toggle("submarine-container-vertical");
+      cruiser.classList.toggle("cruiser-container-vertical");
+      battleship.classList.toggle("battleship-container-vertical");
+      carrier.classList.toggle("carrier-container-vertical");
+      isHorizontal = false;
+      // console.log(isHorizontal)
+      return;
     }
-  };
-
-  // Resets board
-  const resetBoard = () => {
-    for (let i = 0; i < gameBoard.length; i++) {
-      for (let j = 0; j < gameBoard[i].length; j++) {
-        gameBoard[i][j] = 0;
-      }
+    if (!isHorizontal) {
+      destroyer.classList.toggle("destroyer-container-vertical");
+      submarine.classList.toggle("submarine-container-vertical");
+      cruiser.classList.toggle("cruiser-container-vertical");
+      battleship.classList.toggle("battleship-container-vertical");
+      carrier.classList.toggle("carrier-container-vertical");
+      isHorizontal = true;
+      // console.log(isHorizontal)
+      return;
     }
-  };
-  return {
-    gameBoard,
-    placeShip,
-    resetBoard,
-    receiveAttack,
-    ships,
-    removeShip,
-    addShip,
-    removedShip,
   };
 };
 
