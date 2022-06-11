@@ -118,6 +118,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  //move around user ship
+  ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
+  userSquares.forEach((square) =>
+    square.addEventListener("dragstart", dragStart)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragover", dragOver)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragenter", dragEnter)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragleave", dragLeave)
+  );
+  userSquares.forEach((square) => square.addEventListener("drop", dragDrop));
+  userSquares.forEach((square) => square.addEventListener("dragend", dragEnd));
+
   let selectedShipNameWithIndex;
   let draggedShip;
   let draggedShipLength;
@@ -125,26 +142,29 @@ document.addEventListener("DOMContentLoaded", () => {
   ships.forEach((ship) =>
     ship.addEventListener("mousedown", (e) => {
       selectedShipNameWithIndex = e.target.id;
-      console.log(selectedShipNameWithIndex);
+      console.log(parseInt(selectedShipNameWithIndex.substr(-1)));
     })
   );
 
-  const dragStart = () => {
+  function dragStart() {
     draggedShip = this;
-    draggedShipLength = this.childNodes.length;
-    console.log(draggedShip);
-  };
+    draggedShipLength = this.children.length;
+  }
 
-  const dragOver = (e) => {
+  function dragOver(e) {
     e.preventDefault();
-  };
+  }
 
-  const dragEnter = (e) => {
+  function dragEnter(e) {
     e.preventDefault();
-  };
+  }
 
-  const dragDrop = () => {
-    let shipNameWithLastId = draggedShip.lastChild.id;
+  function dragLeave() {
+    // console.log('drag leave')
+  }
+
+  function dragDrop() {
+    let shipNameWithLastId = draggedShip.lastElementChild.id;
     let shipClass = shipNameWithLastId.slice(0, -2);
     // console.log(shipClass)
     let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
@@ -170,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
       10 * lastShipIndex
     );
 
-    selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
+    let selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
 
     shipLastId = shipLastId - selectedShipIndex;
     // console.log(shipLastId)
@@ -193,21 +213,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     displayGrid.removeChild(draggedShip);
     if (!displayGrid.querySelector(".ship")) allShipsPlaced = true;
-  };
+  }
 
-  //Move around user ship
-  ships.forEach((ship) => ship.addEventListener("click", dragStart));
-  userSquares.forEach((square) =>
-    square.addEventListener("dragstart", dragStart)
-  );
-  userSquares.forEach((square) =>
-    square.addEventListener("dragover", dragOver)
-  );
-  userSquares.forEach((square) =>
-    square.addEventListener("dragenter", dragEnter)
-  );
-
-  userSquares.forEach((square) => square.addEventListener("drop", dragDrop));
+  function dragEnd() {
+    // console.log('dragend')
+  }
 
   const playerReady = (num) => {
     let player = `.p${parseInt(num) + 1}`;
