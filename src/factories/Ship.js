@@ -1,5 +1,5 @@
 // Ship factory function
-const Ship = (name, length, width) => {
+export const Ship = (name, length, width) => {
   let hits = 0;
   const hit = () => {
     hits++;
@@ -16,5 +16,3 @@ const Ship = (name, length, width) => {
   }
   return { name, directions, hit, isSunk, hits };
 };
-
-module.exports = { Ship };

@@ -1,50 +1,18 @@
+import { Ship } from "./Ship";
+
 // Gameboard factory function
-const Gameboard = () => {
-  //Generate ships in random location & direction
-  const generate = (ship) => {
-    let randomDirection = Math.floor(Math.random() * ship.directions.length);
-    let current = ship.directions[randomDirection];
-    if (randomDirection === 0) direction = 1;
-    if (randomDirection === 1) direction = 10;
-    let randomStart = Math.abs(
-      Math.floor(
-        Math.random() * computerSquares.length -
-          ship.directions[0].length * direction
-      )
-    );
-
-    const isTaken = current.some((index) =>
-      computerSquares[randomStart + index].classList.contains("taken")
-    );
-    const isAtRightEdge = current.some(
-      (index) => (randomStart + index) % width === width - 1
-    );
-    const isAtLeftEdge = current.some(
-      (index) => (randomStart + index) % width === 0
-    );
-
-    if (!isTaken && !isAtRightEdge && !isAtLeftEdge)
-      current.forEach((index) =>
-        computerSquares[randomStart + index].classList.add("taken", ship.name)
-      );
-    else generate(ship);
-  };
-
-  // Start singleplayer game
-  const startSinglePlayer = (ship1, ship2, ship3, ship4, ship5) => {
-    gameMode = "singlePlayer";
-
-    generate(ship1);
-    generate(ship2);
-    generate(ship3);
-    generate(ship4);
-    generate(ship5);
-
-    startButton.addEventListener("click", playGameSingle);
-  };
+export const Gameboard = () => {
+  const width = 10;
+  //Create ships
+  const ship1 = Ship("destroyer", 2, width);
+  const ship2 = Ship("submarine", 3, width);
+  const ship3 = Ship("cruiser", 3, width);
+  const ship4 = Ship("battleship", 4, width);
+  const ship5 = Ship("carrier", 5, width);
+  const ships = [ship1, ship2, ship3, ship4, ship5];
 
   // Create dom gameboard
-  const createBoard = (grid, squares, width) => {
+  const createBoard = (grid, squares) => {
     for (let i = 0; i < width * width; i++) {
       const square = document.createElement("div");
       square.dataset.id = i;
@@ -53,30 +21,5 @@ const Gameboard = () => {
     }
   };
 
-  // Allow rotation of ships
-  let isHorizontal = true;
-  const rotate = () => {
-    if (isHorizontal) {
-      destroyer.classList.toggle("destroyer-container-vertical");
-      submarine.classList.toggle("submarine-container-vertical");
-      cruiser.classList.toggle("cruiser-container-vertical");
-      battleship.classList.toggle("battleship-container-vertical");
-      carrier.classList.toggle("carrier-container-vertical");
-      isHorizontal = false;
-      // console.log(isHorizontal)
-      return;
-    }
-    if (!isHorizontal) {
-      destroyer.classList.toggle("destroyer-container-vertical");
-      submarine.classList.toggle("submarine-container-vertical");
-      cruiser.classList.toggle("cruiser-container-vertical");
-      battleship.classList.toggle("battleship-container-vertical");
-      carrier.classList.toggle("carrier-container-vertical");
-      isHorizontal = true;
-      // console.log(isHorizontal)
-      return;
-    }
-  };
+  return { createBoard, ships };
 };
-
-module.exports = { Gameboard };
