@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rotateButton = document.querySelector("#rotate");
   const turnDisplay = document.querySelector("#whose-go");
   const infoDisplay = document.querySelector("#info");
+  const setupButtons = document.querySelector(".setup-buttons");
   const width = 10;
   let isHorizontal = true;
   let isGameOver = false;
@@ -78,19 +79,24 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
   // Game Logic for Single Player
   const playGameSingle = () => {
-    if (isGameOver) return;
-    if (currentPlayer === "user") {
-      turnDisplay.innerHTML = "Your Go";
-      computerSquares.forEach((square) =>
-        square.addEventListener("click", function (e) {
-          shotFired = square.dataset.id;
-          revealSquare(square.classList);
-        })
-      );
-    }
-    if (currentPlayer === "enemy") {
-      turnDisplay.innerHTML = "Computers Go";
-      setTimeout(enemyGo, 1000);
+    if (displayGrid.children.length !== 0) {
+      alert("Place all ships!");
+    } else {
+      setupButtons.style.display = "none";
+      if (isGameOver) return;
+      if (currentPlayer === "user") {
+        turnDisplay.innerHTML = "Your Go";
+        computerSquares.forEach((square) =>
+          square.addEventListener("click", function (e) {
+            shotFired = square.dataset.id;
+            revealSquare(square.classList);
+          })
+        );
+      }
+      if (currentPlayer === "enemy") {
+        turnDisplay.innerHTML = "Computers Go";
+        setTimeout(enemyGo, 1000);
+      }
     }
   };
 
@@ -98,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Allow rotation of ships
   const rotate = () => {
-    console.log("click");
     if (isHorizontal) {
       destroyer.classList.toggle("destroyer-container-vertical");
       submarine.classList.toggle("submarine-container-vertical");
@@ -106,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
       battleship.classList.toggle("battleship-container-vertical");
       carrier.classList.toggle("carrier-container-vertical");
       isHorizontal = false;
-      // console.log(isHorizontal)
       return;
     }
     if (!isHorizontal) {
@@ -116,14 +120,13 @@ document.addEventListener("DOMContentLoaded", () => {
       battleship.classList.toggle("battleship-container-vertical");
       carrier.classList.toggle("carrier-container-vertical");
       isHorizontal = true;
-      // console.log(isHorizontal)
       return;
     }
   };
 
   rotateButton.addEventListener("click", rotate);
 
-  //move around user ship
+  //Move around user ship
   ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
   userSquares.forEach((square) =>
     square.addEventListener("dragstart", dragStart)
@@ -143,16 +146,17 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedShipNameWithIndex;
   let draggedShip;
   let draggedShipLength;
-
-  ships.forEach((ship) =>
+  console.log(ships);
+  ships.forEach((ship) => {
     ship.addEventListener("mousedown", (e) => {
+      console.log(e.target);
       selectedShipNameWithIndex = e.target.id;
-      console.log(parseInt(selectedShipNameWithIndex.substr(-1)));
-    })
-  );
+    });
+  });
 
   function dragStart() {
     draggedShip = this;
+    console.log(draggedShip);
     draggedShipLength = this.children.length;
   }
 
@@ -198,21 +202,26 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
 
     shipLastId = shipLastId - selectedShipIndex;
-    // console.log(shipLastId)
 
     if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
       for (let i = 0; i < draggedShipLength; i++) {
+        let directionClass;
+        if (i === 0) directionClass = "start";
+        if (i === draggedShipLength - 1) directionClass = "end";
         userSquares[
           parseInt(this.dataset.id) - selectedShipIndex + i
-        ].classList.add("taken", shipClass);
+        ].classList.add("taken", "horizontal", shipClass, directionClass);
       }
       //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its
       //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
     } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
       for (let i = 0; i < draggedShipLength; i++) {
+        let directionClass;
+        if (i === 0) directionClass = "start";
+        if (i === draggedShipLength - 1) directionClass = "end";
         userSquares[
           parseInt(this.dataset.id) - selectedShipIndex + width * i
-        ].classList.add("taken", shipClass);
+        ].classList.add("taken", "vertical", shipClass, directionClass);
       }
     } else return;
 
@@ -245,15 +254,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (obj.includes("cruiser")) computerGameboard.ships[2].hit();
       if (obj.includes("battleship")) computerGameboard.ships[3].hit();
       if (obj.includes("carrier")) computerGameboard.ships[4].hit();
+      if (obj.includes("taken")) {
+        enemySquare.classList.add("boom");
+      } else {
+        enemySquare.classList.add("miss");
+      }
+      if (obj.includes("miss")) return;
+      checkForWins();
+      currentPlayer = "enemy";
+      if (gameMode === "singlePlayer") playGameSingle();
     }
-    if (obj.includes("taken")) {
-      enemySquare.classList.add("boom");
-    } else {
-      enemySquare.classList.add("miss");
-    }
-    checkForWins();
-    currentPlayer = "enemy";
-    if (gameMode === "singlePlayer") playGameSingle();
   };
 
   //Enemy go
