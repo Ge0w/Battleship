@@ -65,6 +65,17 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     else generate(ship);
   };
+
+  // Create game
+  const createGame = (() => {
+    gameMode = "singlePlayer";
+
+    generate(computerGameboard.ships[0]);
+    generate(computerGameboard.ships[1]);
+    generate(computerGameboard.ships[2]);
+    generate(computerGameboard.ships[3]);
+    generate(computerGameboard.ships[4]);
+  })();
   // Game Logic for Single Player
   const playGameSingle = () => {
     if (isGameOver) return;
@@ -82,20 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(enemyGo, 1000);
     }
   };
-  // Create game
-  const createGame = (() => {
-    gameMode = "singlePlayer";
 
-    generate(computerGameboard.ships[0]);
-    generate(computerGameboard.ships[1]);
-    generate(computerGameboard.ships[2]);
-    generate(computerGameboard.ships[3]);
-    generate(computerGameboard.ships[4]);
+  startButton.addEventListener("click", playGameSingle);
 
-    startButton.addEventListener("click", playGameSingle);
-  })();
   // Allow rotation of ships
   const rotate = () => {
+    console.log("click");
     if (isHorizontal) {
       destroyer.classList.toggle("destroyer-container-vertical");
       submarine.classList.toggle("submarine-container-vertical");
@@ -117,6 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
   };
+
+  rotateButton.addEventListener("click", rotate);
 
   //move around user ship
   ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
