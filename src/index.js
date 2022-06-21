@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupButtons.style.display = "none";
       if (isGameOver) return;
       if (currentPlayer === "user") {
-        turnDisplay.innerHTML = "Your Go";
+        turnDisplay.textContent = "Your Go";
         computerSquares.forEach((square) =>
           square.addEventListener("click", function (e) {
             shotFired = square.dataset.id;
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
       if (currentPlayer === "enemy") {
-        turnDisplay.innerHTML = "Computers Go";
+        turnDisplay.textContent = "Computers Go";
         setTimeout(enemyGo, 1000);
       }
     }
@@ -146,17 +146,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedShipNameWithIndex;
   let draggedShip;
   let draggedShipLength;
-  console.log(ships);
   ships.forEach((ship) => {
     ship.addEventListener("mousedown", (e) => {
-      console.log(e.target);
       selectedShipNameWithIndex = e.target.id;
     });
   });
 
   function dragStart() {
     draggedShip = this;
-    console.log(draggedShip);
     draggedShipLength = this.children.length;
   }
 
@@ -175,10 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function dragDrop() {
     let shipNameWithLastId = draggedShip.lastElementChild.id;
     let shipClass = shipNameWithLastId.slice(0, -2);
-    // console.log(shipClass)
     let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
     let shipLastId = lastShipIndex + parseInt(this.dataset.id);
-    // console.log(shipLastId)
     const notAllowedHorizontal = [
       0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 1, 11, 21, 31, 41, 51, 61, 71, 81,
       91, 2, 22, 32, 42, 52, 62, 72, 82, 92, 3, 13, 23, 33, 43, 53, 63, 73, 83,
@@ -249,11 +244,17 @@ document.addEventListener("DOMContentLoaded", () => {
       currentPlayer === "user" &&
       !isGameOver
     ) {
-      if (obj.includes("destroyer")) computerGameboard.ships[0].hit();
-      if (obj.includes("submarine")) computerGameboard.ships[1].hit();
-      if (obj.includes("cruiser")) computerGameboard.ships[2].hit();
-      if (obj.includes("battleship")) computerGameboard.ships[3].hit();
-      if (obj.includes("carrier")) computerGameboard.ships[4].hit();
+      if (obj.includes("destroyer")) {
+        console.log("destroyer hit");
+        computerGameboard.ships[0].hits++;
+        console.log(computerGameboard.ships[0].hits);
+      }
+      if (obj.includes("submarine")) {
+        computerGameboard.ships[1].hits++;
+      }
+      if (obj.includes("cruiser")) computerGameboard.ships[2].hits++;
+      if (obj.includes("battleship")) computerGameboard.ships[3].hits++;
+      if (obj.includes("carrier")) computerGameboard.ships[4].hits++;
       if (obj.includes("taken")) {
         enemySquare.classList.add("boom");
       } else {
@@ -273,76 +274,80 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!userSquares[square].classList.contains("boom")) {
       userSquares[square].classList.add("boom");
       if (userSquares[square].classList.contains("destroyer"))
-        userGameboard.ships[0].hit();
+        userGameboard.ships[0].hits++;
       if (userSquares[square].classList.contains("submarine"))
-        userGameboard.ships[1].hit();
+        userGameboard.ships[1].hits++;
       if (userSquares[square].classList.contains("cruiser"))
-        userGameboard.ships[2].hit();
+        userGameboard.ships[2].hits++;
       if (userSquares[square].classList.contains("battleship"))
-        userGameboard.ships[3].hit();
+        userGameboard.ships[3].hits++;
       if (userSquares[square].classList.contains("carrier"))
-        userGameboard.ships[4].hit();
+        userGameboard.ships[4].hits++;
       checkForWins();
     } else if (gameMode === "singlePlayer") enemyGo();
     currentPlayer = "user";
-    turnDisplay.innerHTML = "Your Go";
+    turnDisplay.textContent = "Your Go";
   };
+
+  function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   //Check for win
   const checkForWins = () => {
     let enemy = "computer";
-    if (userGameboard.ships[0].hits === 2) {
-      infoDisplay.innerHTML = `You sunk the ${enemy}'s destroyer`;
-      userGameboard.ships[0].hits = 10;
-    }
-    if (userGameboard.ships[1].hits === 3) {
-      infoDisplay.innerHTML = `You sunk the ${enemy}'s submarine`;
-      userGameboard.ships[1].hits = 10;
-    }
-    if (userGameboard.ships[2].hits === 3) {
-      infoDisplay.innerHTML = `You sunk the ${enemy}'s cruiser`;
-      userGameboard.ships[2].hits = 10;
-    }
-    if (userGameboard.ships[3].hits === 4) {
-      infoDisplay.innerHTML = `You sunk the ${enemy}'s battleship`;
-      userGameboard.ships[3].hits = 10;
-    }
-    if (userGameboard.ships[4].hits === 5) {
-      infoDisplay.innerHTML = `You sunk the ${enemy}'s carrier`;
-      userGameboard.ships[4].hits = 10;
-    }
+
     if (computerGameboard.ships[0].hits === 2) {
-      infoDisplay.innerHTML = `${enemy} sunk your destroyer`;
+      infoDisplay.textContent = `You sunk the ${enemy}'s destroyer`;
       computerGameboard.ships[0].hits = 10;
     }
     if (computerGameboard.ships[1].hits === 3) {
-      infoDisplay.innerHTML = `${enemy} sunk your submarine`;
-      computerGameboard.ships[1].hi = 10;
+      infoDisplay.textContent = `You sunk the ${enemy}'s submarine`;
+      computerGameboard.ships[1].hits = 10;
     }
     if (computerGameboard.ships[2].hits === 3) {
-      infoDisplay.innerHTML = `${enemy} sunk your cruiser`;
+      infoDisplay.textContent = `You sunk the ${enemy}'s cruiser`;
       computerGameboard.ships[2].hits = 10;
     }
     if (computerGameboard.ships[3].hits === 4) {
-      infoDisplay.innerHTML = `${enemy} sunk your battleship`;
+      infoDisplay.textContent = `You sunk the ${enemy}'s battleship`;
       computerGameboard.ships[3].hits = 10;
     }
     if (computerGameboard.ships[4].hits === 5) {
-      infoDisplay.innerHTML = `${enemy} sunk your carrier`;
+      infoDisplay.textContent = `You sunk the ${enemy}'s carrier`;
       computerGameboard.ships[4].hits = 10;
     }
-
-    if (
-      userGameboard.ships[0].hits +
-        userGameboard.ships[1].hits +
-        userGameboard.ships[2].hits +
-        userGameboard.ships[3].hits +
-        userGameboard.ships[4].hits ===
-      50
-    ) {
-      infoDisplay.innerHTML = "YOU WIN";
-      gameOver();
+    if (userGameboard.ships[0].hits === 2) {
+      infoDisplay.textContent = `${capitaliseFirstLetter(
+        enemy
+      )} sunk your destroyer`;
+      userGameboard.ships[0].hits = 10;
     }
+    if (userGameboard.ships[1].hits === 3) {
+      infoDisplay.textContent = `${capitaliseFirstLetter(
+        enemy
+      )} sunk your submarine`;
+      userGameboard.ships[1].hits = 10;
+    }
+    if (userGameboard.ships[2].hits === 3) {
+      infoDisplay.textContent = `${capitaliseFirstLetter(
+        enemy
+      )} sunk your cruiser`;
+      userGameboard.ships[2].hits = 10;
+    }
+    if (userGameboard.ships[3].hits === 4) {
+      infoDisplay.textContent = `${capitaliseFirstLetter(
+        enemy
+      )} sunk your battleship`;
+      userGameboard.ships[3].hits = 10;
+    }
+    if (userGameboard.ships[4].hits === 5) {
+      infoDisplay.textContent = `${capitaliseFirstLetter(
+        enemy
+      )} sunk your carrier`;
+      userGameboard.ships[4].hits = 10;
+    }
+
     if (
       computerGameboard.ships[0].hits +
         computerGameboard.ships[1].hits +
@@ -351,7 +356,18 @@ document.addEventListener("DOMContentLoaded", () => {
         computerGameboard.ships[4].hits ===
       50
     ) {
-      infoDisplay.innerHTML = `${enemy.toUpperCase()} WINS`;
+      infoDisplay.textContent = "YOU WIN";
+      gameOver();
+    }
+    if (
+      userGameboard.ships[0].hits +
+        userGameboard.ships[1].hits +
+        userGameboard.ships[2].hits +
+        userGameboard.ships[3].hits +
+        userGameboard.ships[4].hits ===
+      50
+    ) {
+      infoDisplay.textContent = `${enemy.toUpperCase()} WINS`;
       gameOver();
     }
   };
