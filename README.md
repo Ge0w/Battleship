@@ -2,31 +2,33 @@
 
 ## Overview
 
-Overview here
+This is a version of the classic game 'Battleship'.
 
 ## Features
 
-- Feature 1
-- Feature 2
+- Test driven development using JestJS
+- Module functions
+- Factory functions
+- Dynamic DOM
 
 ## Usage
 
-Usage here
+Place all ships by dragging and dropping then click start game button to commence.
 
 ### Live Version:
 
-[Batteleship](LINK HERE)
+[Battleship](LINK HERE)
 
 ### From the repo:
 
 1. Close this project locally
 2. Run npm install in your bash / command line
-3. Run npm run webpack in your bash / command line
-4. Sign up and post a message!
+3. Run npm run build in your bash / command line
+4. Open in browser
+5. Try and beat the computer!
 
 ## Dependencies
 
-- [MongoDB](https://www.mongodb.com/)
-- [ExpressJS](https://expressjs.com/)
-- [BCrypt.JS](https://www.npmjs.com/package/bcryptjs)
-- [PassportJS](https://www.passportjs.org/)
+- [Webpack](https://webpack.js.org/)
+- [BabelJS](https://babeljs.io/)
+- [JestJS](https://jestjs.io/)
