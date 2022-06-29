@@ -220,8 +220,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
 
     shipLastId = shipLastId - selectedShipIndex;
-    let isValid = true;
 
+    //Check if placement overrides already placed ship
+    let isValid = true;
     if (isHorizontal) {
       for (let i = 0; i < draggedShipLength; i++) {
         const currentSquare =
@@ -246,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    //If ship doesn't override placed ship, place ship
     if (
       isHorizontal &&
       !newNotAllowedHorizontal.includes(shipLastId) &&
@@ -264,8 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
           directionClass
         );
       }
-      //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its
-      //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
+      //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
     } else if (
       !isHorizontal &&
       !newNotAllowedVertical.includes(shipLastId) &&
