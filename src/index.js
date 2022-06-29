@@ -1,4 +1,5 @@
 import { Gameboard } from "../src/factories/Gameboard";
+import "./stylesheets/styles.css";
 
 document.addEventListener("DOMContentLoaded", () => {
   const userGrid = document.querySelector(".user-grid");
