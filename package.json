@@ -7,6 +7,7 @@
     "test": "jest",
     "build": "webpack",
     "watch": "webpack --watch",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "repository": {
