@@ -18,7 +18,7 @@
 }
 
 .computer-grid > .taken {
-  background-color: grey !important;
+  background-color: hsl(200, 100%, 50%) !important;
   border-radius: 0 !important;
 }
 
