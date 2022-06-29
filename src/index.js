@@ -12,10 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const carrier = document.querySelector(".carrier-container");
   const startButton = document.querySelector("#start");
   const rotateButton = document.querySelector("#rotate");
+  const restartButton = document.querySelector("#restart");
   const turnDisplay = document.querySelector("#whose-go");
   const infoDisplay = document.querySelector("#info");
+  const infoText = document.querySelectorAll(".info-text");
   const setupButtons = document.querySelector(".setup-buttons");
+  const scoreBoard = document.querySelector("#scoreboard");
   const width = 10;
+  let userScore = 0;
+  let computerScore = 0;
+  let domShips = [];
+  let gameCreated = false;
   let isHorizontal = true;
   let isGameOver = false;
   let currentPlayer = "user";
@@ -68,21 +75,37 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Create game
-  const createGame = (() => {
+  const createGame = () => {
     gameMode = "singlePlayer";
-
+    gameCreated = true;
     generate(computerGameboard.ships[0]);
     generate(computerGameboard.ships[1]);
     generate(computerGameboard.ships[2]);
     generate(computerGameboard.ships[3]);
     generate(computerGameboard.ships[4]);
-  })();
+  };
   // Game Logic for Single Player
   const playGameSingle = () => {
-    if (displayGrid.children.length !== 0) {
+    if (!allShipsPlaced) {
       alert("Place all ships!");
+      return;
+    }
+    if (!gameCreated) {
+      createGame();
+      startButton.style.display = "none";
+      rotateButton.style.display = "none";
+      if (isGameOver) return;
+      if (currentPlayer === "user") {
+        turnDisplay.textContent = "Your Go";
+        infoText.forEach((e) => (e.style.display = "block"));
+        computerSquares.forEach((square) =>
+          square.addEventListener("click", function (e) {
+            shotFired = square.dataset.id;
+            revealSquare(square.classList);
+          })
+        );
+      }
     } else {
-      setupButtons.style.display = "none";
       if (isGameOver) return;
       if (currentPlayer === "user") {
         turnDisplay.textContent = "Your Go";
@@ -93,10 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
           })
         );
       }
-      if (currentPlayer === "enemy") {
-        turnDisplay.textContent = "Computers Go";
-        setTimeout(enemyGo, 1000);
-      }
+    }
+    if (currentPlayer === "enemy") {
+      turnDisplay.textContent = "Computers Go";
+      setTimeout(enemyGo, 1000);
     }
   };
 
@@ -197,29 +220,75 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
 
     shipLastId = shipLastId - selectedShipIndex;
+    let isValid = true;
 
-    if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+    if (isHorizontal) {
+      for (let i = 0; i < draggedShipLength; i++) {
+        const currentSquare =
+          userSquares[parseInt(this.dataset.id) - selectedShipIndex + i];
+        const taken = currentSquare.classList.contains("taken");
+        if (taken) {
+          isValid = false;
+          break;
+        }
+      }
+    } else {
+      for (let i = 0; i < draggedShipLength; i++) {
+        const currentSquare =
+          userSquares[
+            parseInt(this.dataset.id) - selectedShipIndex + width * i
+          ];
+        const taken = currentSquare.classList.contains("taken");
+        if (taken) {
+          isValid = false;
+          break;
+        }
+      }
+    }
+
+    if (
+      isHorizontal &&
+      !newNotAllowedHorizontal.includes(shipLastId) &&
+      isValid
+    ) {
       for (let i = 0; i < draggedShipLength; i++) {
         let directionClass;
         if (i === 0) directionClass = "start";
         if (i === draggedShipLength - 1) directionClass = "end";
-        userSquares[
-          parseInt(this.dataset.id) - selectedShipIndex + i
-        ].classList.add("taken", "horizontal", shipClass, directionClass);
+        const currentSquare =
+          userSquares[parseInt(this.dataset.id) - selectedShipIndex + i];
+        currentSquare.classList.add(
+          "taken",
+          "horizontal",
+          shipClass,
+          directionClass
+        );
       }
       //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its
       //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
-    } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+    } else if (
+      !isHorizontal &&
+      !newNotAllowedVertical.includes(shipLastId) &&
+      isValid
+    ) {
       for (let i = 0; i < draggedShipLength; i++) {
         let directionClass;
         if (i === 0) directionClass = "start";
         if (i === draggedShipLength - 1) directionClass = "end";
-        userSquares[
-          parseInt(this.dataset.id) - selectedShipIndex + width * i
-        ].classList.add("taken", "vertical", shipClass, directionClass);
+        const currentSquare =
+          userSquares[
+            parseInt(this.dataset.id) - selectedShipIndex + width * i
+          ];
+        currentSquare.classList.add(
+          "taken",
+          "vertical",
+          shipClass,
+          directionClass
+        );
       }
     } else return;
 
+    domShips.push(draggedShip);
     displayGrid.removeChild(draggedShip);
     if (!displayGrid.querySelector(".ship")) allShipsPlaced = true;
   }
@@ -227,11 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function dragEnd() {
     // console.log('dragend')
   }
-
-  const playerReady = (num) => {
-    let player = `.p${parseInt(num) + 1}`;
-    document.querySelector(`${player} .ready span`).classList.toggle("green");
-  };
 
   //User go, reveal square
   const revealSquare = (classList) => {
@@ -245,9 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
       !isGameOver
     ) {
       if (obj.includes("destroyer")) {
-        console.log("destroyer hit");
         computerGameboard.ships[0].hits++;
-        console.log(computerGameboard.ships[0].hits);
       }
       if (obj.includes("submarine")) {
         computerGameboard.ships[1].hits++;
@@ -272,7 +334,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gameMode === "singlePlayer")
       square = Math.floor(Math.random() * userSquares.length);
     if (!userSquares[square].classList.contains("boom")) {
-      userSquares[square].classList.add("boom");
+      const hit = userSquares[square].classList.contains("taken");
+      userSquares[square].classList.add(hit ? "boom" : "miss");
       if (userSquares[square].classList.contains("destroyer"))
         userGameboard.ships[0].hits++;
       if (userSquares[square].classList.contains("submarine"))
@@ -357,6 +420,8 @@ document.addEventListener("DOMContentLoaded", () => {
       50
     ) {
       infoDisplay.textContent = "YOU WIN";
+      userScore++;
+      scoreBoard.textContent = `User Score: ${userScore} | Computer Score: ${computerScore}`;
       gameOver();
     }
     if (
@@ -368,12 +433,39 @@ document.addEventListener("DOMContentLoaded", () => {
       50
     ) {
       infoDisplay.textContent = `${enemy.toUpperCase()} WINS`;
+      computerScore++;
+      scoreBoard.textContent = `User Score: ${userScore} | Computer Score: ${computerScore}`;
       gameOver();
     }
   };
 
   const gameOver = () => {
     isGameOver = true;
-    startButton.removeEventListener("click", playGameSingle);
+    turnDisplay.textContent = "";
+    restartButton.style.display = "inline-block";
+    infoText.forEach((e) => (e.style.display = "none"));
   };
+
+  const restart = () => {
+    userGameboard.ships.forEach((ship) => (ship.hits = 0));
+    computerGameboard.ships.forEach((ship) => (ship.hits = 0));
+    restartButton.style.display = "none";
+    startButton.style.display = "inline-block";
+    rotateButton.style.display = "inline-block";
+    isGameOver = false;
+    infoDisplay.textContent = "";
+    domShips.forEach((e) => {
+      displayGrid.append(e);
+    });
+    domShips = [];
+    allShipsPlaced = false;
+    gameCreated = false;
+    currentPlayer = "user";
+    const computerTaken = computerGrid.querySelectorAll(".taken, .miss, .boom");
+    const userTaken = userGrid.querySelectorAll(".taken, .miss, .boom");
+    computerTaken.forEach((e) => e.classList.remove(...e.classList));
+    userTaken.forEach((e) => e.classList.remove(...e.classList));
+  };
+
+  restartButton.addEventListener("click", restart);
 });

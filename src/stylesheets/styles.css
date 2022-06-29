@@ -26,6 +26,14 @@
   border: 1px solid hsla(0, 0%, 100%, 0.2);
 }
 
+.grid-display {
+  margin: 2vmin 0 2vmin 0;
+}
+
+#restart {
+  display: none;
+}
+
 .taken,
 .ship {
   background-color: hsl(0, 0%, 80%);
@@ -132,6 +140,7 @@
 
 .info-text {
   margin: 1rem;
+  display: none;
 }
 
 .miss,
